@@ -23,7 +23,6 @@ public class Stock {
 		if (this.quantity - quantity < 0) {
 			throw new RuntimeException("foo");
 		}
-
 		this.quantity -= quantity;
 	}
 
