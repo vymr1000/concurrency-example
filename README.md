@@ -20,7 +20,7 @@ CountDownLatch 를 이용하여, 멀티스레드가 100번 작업이 모두 완�
 ### CountDownLatch 작동원리
 new CountDownLatch(5); 를 이용해 Latch할 갯수를 지정한다.
 countDown()을 호출하면 Latch의 숫자가 1개씩 감소한다.
-await() 은 Latch의 숫자가 0이 될 때 까지 기다리는 코드이다.
+await() 은 Latch의 숫자가 0이 될 때 까지 기다리는 코드이다.
 ```java
 package com.example.stock.service;
 
