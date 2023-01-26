@@ -18,7 +18,6 @@ public class OptimisticLockStockService {
 	public void decrease(Long id, Long quantity) {
 		Stock stock = stockRepository.findByIdWithOptimisticLock(id);
 		stock.decrease(quantity);
-
 		stockRepository.saveAndFlush(stock);
 	}
 }

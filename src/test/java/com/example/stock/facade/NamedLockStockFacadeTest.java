@@ -26,7 +26,6 @@ public class NamedLockStockFacadeTest {
 	@BeforeEach
 	public void insert() {
 		Stock stock = new Stock(1L, 100L);
-
 		stockRepository.saveAndFlush(stock);
 	}
 
@@ -50,11 +49,8 @@ public class NamedLockStockFacadeTest {
 				}
 			});
 		}
-
 		latch.await();
-
 		Stock stock = stockRepository.findById(1L).orElseThrow();
-
 		// 100 - (100 * 1) = 0
 		assertEquals(0, stock.getQuantity());
 	}
