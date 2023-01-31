@@ -328,7 +328,7 @@ Redis 를 사용하여 동시성 문제를 해결하는 대표적인 라이브�
 - Redisson
 
 ### Lettuce
-- Setnx 명령어를 활용하여 분산락을 구현 (Set if not Exist - key:value를 Set 할 . 기존의 값이 없을 때만 Set 하는 명령어)
+- Setnx 명령어를 활용하여 분산락을 구현 (Set if not Exist - key:value를 Set 할 때. 기존의 값이 없을 때만 Set 하는 명령어)
 - Setnx 는 Spin Lock방식이므로 retry 로직을 개발자가 작성해 주어야 한다.
 - Spin Lock 이란 Lock 을 획득하려는 스레드가 Lock을 획득할 수 있는지 확인하면서 반복적으로 시도하는 방법이다.
 
@@ -346,7 +346,7 @@ Redis 를 사용하여 동시성 문제를 해결하는 대표적인 라이브�
 ### Lettuce vs Redisson
 **Lettuce**
 - 구현이 간단하다.
-- Spring data redis를 이용하면 lettuce가 기본이기 문에 별도의 라이브러리를 사용하지 않아도 된다.
+- Spring data redis를 이용하면 lettuce가 기본이기 때문에 별도의 라이브러리를 사용하지 않아도 된다.
 - Spin Lock 방식이기 때문에 동시에 많은 스레드가 lock 획득 대기 상태라면 redis에 부하가 갈 수 있다.
 
 
