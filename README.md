@@ -4,7 +4,7 @@
 -> inflearn ***[재고시스템으로 알아보는 동시성이슈 해결방법](https://www.inflearn.com/course/%EB%8F%99%EC%8B%9C%EC%84%B1%EC%9D%B4%EC%8A%88-%EC%9E%AC%EA%B3%A0%EC%8B%9C%EC%8A%A4%ED%85%9C/dashboard)*** 강의를 듣고 실습한 내용입니다.
 
 # 개요
-동시성 이슈란 여러 스레드가 동시에 같은 인스턴스의 필드값을 변경하면서 발생하는 문제를 의미한다.
+동시성 이슈란 여러 스레드가 동시에 특정 자원을 제어하려는 시도가 발생하면서 생기는 문제를 의미한다.
 
 # StockServiceTest.java
 멀티 스레드 환경을 구현한 Service Test 코드를 살펴본다.
@@ -252,7 +252,7 @@ CountDownLatch를 이용하여 멀티스레드 작업이 100번의 재고감소 
 
 ![pessimistic-lock](images/image-6.png)
 
-예를들어 Server 1 DB 데이터를 가져올 떄 Lock을 걸면 다른 서버에서는 Server1의 작업이 끝나 락이 풀릴 때 까지 데이터에 접근하지 못하게 다.
+예를들어 Server 1 DB 데이터를 가져올 때 Lock을 걸면 다른 서버에서는 Server1의 작업이 끝나 락이 풀릴 때 까지 데이터에 접근하지 못하게 한다.
 결론적으로 Pesimistic Lock이란 데이터에는 락을 가진 스레드만 접근이 가능하도록 제어하는 방법이다.
 
 ### Pessimistic Lock 의 장점
@@ -269,8 +269,8 @@ CountDownLatch를 이용하여 멀티스레드 작업이 100번의 재고감소 
 ### 2. Optimisitc Lock
 
 - 실제로 **Lock을 이용하지 않고** 버전을 이용함으로써 정합성을 맞추는 방법이다.
-- 먼저 데이터를 읽은 후에 update를 수행할 떄 현재 내가 읽은 **버전이 맞는지 확인하여** 업데이트 한다. 
-- 자원에 락을 걸어서 선점하지 않고 동시성 문제가 발생하면 그때가서 처리하는 낙관적 락 방식이다. 내가 읽은 버전에서 수정사항이 생겼을 경우에는 application에서 다시 읽은 후에 작업을 수행하는 롤백 작업을 수행해야 힌다.
+- 먼저 데이터를 읽은 후에 update를 수행할  현재 내가 읽은 **버전이 맞는지 확인하여** 업데이트 한다. 
+- 자원에 락을 걸어서 선점하지 않고 동시성 문제가 발생하면 그때가서 처리하는 낙관적 락 방식이다. 내가 읽은 버전에서 수정사항이 생겼을 경우에는 application에서 다시 읽은 후에 작업을 수행하는 롤백 작업을 수행해야 한다.
 ![optimisitc-lock-1](images/image-7.png)
 
 [Optimisitc Lock 과정]
@@ -294,7 +294,7 @@ CountDownLatch를 이용하여 멀티스레드 작업이 100번의 재고감소 
 ### 3. Named Lock
 - Named Lock은 이름을 가진 metadata Lock 이다.
 - 이름을 가진 락을 획득한 후 해지될때 까지 다른 세션은 이 락을 획득할 수 없게 된다.
-- 주의할 점은 트랜잭션이 종료될 떄 락이 자동으로 해지되지 않기 떄문에 별도로 해지해주거나 선점시간이 끝나야 해지된다.
+- 주의할 점은 트랜잭션이 종료될  락이 자동으로 해지되지 않기 때문에 별도로 해지해주거나 선점시간이 끝나야 해지된다.
 - Mysql 에서는 getLock( )을 통해 획득 / releaseLock()으로 해지 할 수 있다.
 
 Named Lock은 Passimistic Lock과 유사하지만 Passimistic Lock은 row 나 table 단위로 락을 걸고 Named Lock은 metadata 단위로 락을 건다는 차이점이 존재한다.
@@ -328,7 +328,7 @@ Redis 를 사용하여 동시성 문제를 해결하는 대표적인 라이브�
 - Redisson
 
 ### Lettuce
-- Setnx 명령어를 활용하여 분산락을 구현 (Set if not Exist - key:value를 Set 할 떄. 기존의 값이 없을 때만 Set 하는 명령어)
+- Setnx 명령어를 활용하여 분산락을 구현 (Set if not Exist - key:value를 Set 할 . 기존의 값이 없을 때만 Set 하는 명령어)
 - Setnx 는 Spin Lock방식이므로 retry 로직을 개발자가 작성해 주어야 한다.
 - Spin Lock 이란 Lock 을 획득하려는 스레드가 Lock을 획득할 수 있는지 확인하면서 반복적으로 시도하는 방법이다.
 
@@ -346,7 +346,7 @@ Redis 를 사용하여 동시성 문제를 해결하는 대표적인 라이브�
 ### Lettuce vs Redisson
 **Lettuce**
 - 구현이 간단하다.
-- Spring data redis를 이용하면 lettuce가 기본이기 떄문에 별도의 라이브러리를 사용하지 않아도 된다.
+- Spring data redis를 이용하면 lettuce가 기본이기 문에 별도의 라이브러리를 사용하지 않아도 된다.
 - Spin Lock 방식이기 때문에 동시에 많은 스레드가 lock 획득 대기 상태라면 redis에 부하가 갈 수 있다.
 
 
