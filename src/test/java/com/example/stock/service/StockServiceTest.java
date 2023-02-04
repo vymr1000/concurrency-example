@@ -4,6 +4,7 @@ import com.example.stock.domain.Stock;
 import com.example.stock.repository.StockRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,10 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StockServiceTest {
 
 	@Autowired
-	/* 일반 StockService
-	* private StockService stockService;
-	* */
-	private PessimisticLockStockService stockService;
+	private StockService stockService;
 
 	@Autowired
 	private StockRepository stockRepository;
@@ -29,7 +27,7 @@ class StockServiceTest {
 	@BeforeEach
 	public void insert() {
 		Stock stock = new Stock(1L, 100L);
-		stockRepository.saveAndFlush(stock);
+		stockRepository.save(stock);
 	}
 
 	@AfterEach
@@ -41,12 +39,32 @@ class StockServiceTest {
 	public void decrease_test() {
 		stockService.decrease(1L, 1L);
 		Stock stock = stockRepository.findById(1L).orElseThrow();
-		// 테스트 결과 100 - 1 = 99
 		assertEquals(99, stock.getQuantity());
 	}
 
 	@Test
-	public void 동시에_100명이_주문() throws InterruptedException {
+	@DisplayName("트랜잭션 적용 안됨")
+	public void transaction_test() throws Exception {
+		System.out.println("== start ==");
+		stockService.decrease(1L, 1L);
+		System.out.println("== end ==");
+	}
+
+	@Test
+	public void single_thread_test() throws InterruptedException {
+		// 100개의 요청
+		int threadCount = 100;
+		// decrease 실행
+		for (int i = 0; i < threadCount; i++) {
+			stockService.decrease(1L, 1L);
+		}
+		Stock stock = stockRepository.findById(1L).orElseThrow();
+		// 100 - (100 * 1) = 0
+		assertEquals(0, stock.getQuantity());
+	}
+
+	@Test
+	public void multi_thread_test() throws InterruptedException {
 		// 100개의 요청
 		int threadCount = 100;
 		// 비동기로 실행하는 작업을 단순화하여 사용할 수 있게 하는 Java API ExecutorService
