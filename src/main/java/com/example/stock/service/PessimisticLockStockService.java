@@ -13,11 +13,17 @@ public class PessimisticLockStockService {
 	}
 
 	@Transactional
-	public Long decrease(Long id, Long quantity) {
+	public Long updateStock(Stock stock) {
+		stockRepository.saveAndFlush(stock);
+		return stock.getQuantity();
+	}
+	/**
+	 * decrease() -> updateStock() 호출
+	 */
+	public void decrease(Long id, Long quantity) {
 		/* Pessimistic Lock 메소드 findByIdWithPessimisticLock 호출 */
 		Stock stock = stockRepository.findByIdWithPessimisticLock(id);
 		stock.decrease(quantity);
-		stockRepository.saveAndFlush(stock);
-		return stock.getQuantity();
+		updateStock(stock);
 	}
 }

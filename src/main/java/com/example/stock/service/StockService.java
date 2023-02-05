@@ -5,6 +5,7 @@ import javax.persistence.EntityManager;
 import com.example.stock.domain.Stock;
 import com.example.stock.repository.StockRepository;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
